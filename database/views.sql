@@ -59,3 +59,5 @@ JOIN product_materials pm ON np.product_material_id = pm.product_material_id
 GROUP BY np.nixar_product_sku, np.product_name 
 ORDER BY total_revenue DESC 
 LIMIT 5; 
+
+
