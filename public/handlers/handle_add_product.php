@@ -12,7 +12,6 @@
         $ProductName = $Sanitized['product_name'];
         $ProductSku = $Sanitized['product_sku'];
         $MaterialId = $Sanitized['product_material_id'];
-        $CarType = $Sanitized['car_type'];
         $StockCount = $Sanitized['stock_count'];
         $Markup = $Sanitized['mark_up'];
         $SupplierId = $Sanitized['product_supplier_id'];
@@ -22,6 +21,7 @@
         $CarMake = $_POST['car_make'];
         $CarModel = $_POST['car_model'];
         $CarYear = $_POST['car_year'];
+        $CarType = $_POST['car_type'];
         // Transform Car Details into an array
         $CompatibleCars = [];
         for($I = 0; $I < count($CarMake); $I++) {
@@ -29,38 +29,26 @@
                 'make' => $CarMake[$I],
                 'model' => $CarModel[$I],
                 'year' => $CarYear[$I],
-                'type' => $CarType
+                'type' => $CarType[$I]
             ];
         }
         // Save image to `../assets/img/uploads/` and store base image url
-        $UploadFileName = null;
-        if ($Image && $Image['error'] === 0) {
-            $Dir = __DIR__ . '/../assets/img/uploads/';
-            $ImgPath = basename($Image['name']);
-            $FileName = time(). '_' . uniqid() . '_' . $ImgPath;
-            $SavePath = "{$Dir}{$FileName}";
-            // Save image to `public/img/uploads`
-            if(move_uploaded_file($Image['tmp_name'], $SavePath)) {
-                $UploadFileName = $FileName;
-            }
-        }
+        $UploadFileName = Image::uploadToDirectory($Image);
 
-        // begin transaction
-        $Conn->autocommit(false);
+        $Conn->begin_transaction();
         try {
             $Product = new NixarProduct($Conn);
             $Supplier = new Supplier($Conn);
             $Model = new CarModel($Conn);
             $Inventory = new Inventory($Conn);
 
-            $Conn->begin_transaction();
             // Insert supplier info
             $SupplierInfo = [
                 'id' => $SupplierId,
                 'sku' => $ProductSku,
                 'base_price' => $BasePrice
             ];
-            $SupplierInsertId = $Supplier->add($SupplierInfo, true);
+            $SupplierInsertId = $Supplier->add($SupplierInfo);
             // Insert product information
             $ProductMeta = [
                 'product_sku' => $ProductSku,
@@ -70,9 +58,9 @@
                 'image_url' => $UploadFileName,
                 'mark_up' => $Markup
             ];
-            $Status = $Product->create($ProductMeta);
+            $Result = $Product->create($ProductMeta);
             error_log("Product creation status: " . var_export($Status, true));
-            if (!$Status) {
+            if (!$Result['success']) {
                 throw new Exception('Failed to add product.');
             }
             // Insert inventory
@@ -81,15 +69,15 @@
                 'current_stock' => $StockCount,
                 'min_threshold' => $Threshold
             ];
-            $InventoryStatus = $Inventory->create($InventoryMeta);
+            $InventoryResult = $Inventory->create($InventoryMeta);
             error_log("Inventory creation status: " . var_export($InventoryStatus, true));
-            if (!$Status) {
+            if (!$InventoryResult['success']) {
                 throw new Exception('Failed to add inventory product.');
             }
             // Insert car models
             $ProductCompatibleId = [];
             for ($I = 0; $I < count($CompatibleCars); $I++) {
-                $ProductCompatibleId[] = $Model->add($CompatibleCars[$I], true);
+                $ProductCompatibleId[] = $Model->add($CompatibleCars[$I]);
             }
             // Insert Product Compatibility
             foreach ($ProductCompatibleId as $CompatibleId) {
@@ -103,8 +91,6 @@
             error_log("Error: " . $E->getMessage());
             error_log("Trace: " . $E->getTraceAsString());
             echo json_encode(['success' => false, 'message' => $E->getMessage()]);
-        } finally {
-            $Conn->autocommit(true);
         }
     }
 ?>

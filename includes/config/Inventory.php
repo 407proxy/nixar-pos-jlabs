@@ -15,18 +15,54 @@
                 }
 
                 $Stmt->bind_param("sii", $InventoryMeta['product_sku'], $InventoryMeta['current_stock'], $InventoryMeta['min_threshold']);
-                $Status = $Stmt->execute();
+                $Stmt->execute();
                 $Stmt->close();
 
-                return $Status;
+                return [
+                    'success' => true,
+                    'message' => "Successfully created inventory for {$InventoryMeta['product_sku']}"
+                ];
             } catch (Exception $E) {
                 return [
-                    "status" => "error",
+                    "success" => false,
                     "message" => $E->getMessage()
                 ];
             }
         }
-        // TODO: fetchInventory
+        public function update(array $InventoryData) {
+            try {
+                $Sql = "UPDATE inventory SET current_stock = ?, 
+                    min_threshold = ?, 
+                    updated_at = ? 
+                    WHERE nixar_product_sku = ?";
+                $Stmt = $this->Conn->prepare($Sql);
+                if (!$Stmt) {
+                    throw new Exception('Failed to prepare UPDATE statement: ' . $this->Conn->error);
+                }
+
+                $UpdatedDate = date('Y-m-d H:i:s');
+                $Stmt->bind_param(
+                    "iiss",
+                    $InventoryData['stock_count'],
+                    $InventoryData['min_threshold'],
+                    $UpdatedDate,
+                    $InventoryData['nixar_product_sku']
+                );
+                $Stmt->execute();
+                $Stmt->close();
+
+                return [
+                    "success" => true,
+                    "message" => "Inventory for {$InventoryData['nixar_product_sku']} successfully updated."
+                ];
+            } catch (Exception $E) {
+                return [
+                    "success" => false,
+                    "message" => $E->getMessage()
+                ];
+            }
+        }
+
         public function fetchInventory(?int $Limit = null, int $Offset = 0): array {
             $Sql = "SELECT * FROM product_inventory_view ORDER BY current_stock DESC, product_name ASC";
             if ($Limit !== null) {

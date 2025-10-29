@@ -28,22 +28,22 @@
             </div>
             <div class="card-grid">
               <div class="card text-left">
-                <div class="card-image"> <img src="../assets/svg/nixar-logo-red.svg" class="card-img" alt="Placeholder Image"></div>
+                <div class="card-image"> <img src="assets/svg/nixar-logo-red.svg" class="card-img" alt="Placeholder Image"></div>
                 <h6>Total Revenue</h6>
                 <p class="metric">₱99,999</p>
               </div>
               <div class="card text-left">
-                <div class="card-image"> <img src="../assets/svg/nixar-logo-red.svg" class="card-img" alt="Placeholder Image"></div>
+                <div class="card-image"> <img src="assets/svg/nixar-logo-red.svg" class="card-img" alt="Placeholder Image"></div>
                 <h6>Number of Transactions</h6>
                 <p class="metric">67</p>
               </div>
               <div class="card text-left">
-                <div class="card-image"> <img src="../assets/svg/nixar-logo-red.svg" class="card-img" alt="Placeholder Image"></div>
+                <div class="card-image"> <img src="assets/svg/nixar-logo-red.svg" class="card-img" alt="Placeholder Image"></div>
                 <h6>Average Transaction Value</h6>
                 <p class="metric">₱200</p>
               </div>
               <div class="card text-left">
-                <div class="card-image"> <img src="../assets/svg/nixar-logo-red.svg" class="card-img" alt="Placeholder Image"></div>
+                <div class="card-image"> <img src="assets/svg/nixar-logo-red.svg" class="card-img" alt="Placeholder Image"></div>
                 <h6>Profit Performance (vs. last month)</h6>
                 <p class="metric">30% ↑</p>
               </div>
@@ -54,22 +54,22 @@
             <h2 class="fw-bold">Inventory</h2>
             <div class="card-grid">
               <div class="card text-left">
-                <div class="card-image"> <img src="../assets/svg/nixar-logo-red.svg" class="card-img" alt="Placeholder Image"></div>
+                <div class="card-image"> <img src="assets/svg/nixar-logo-red.svg" class="card-img" alt="Placeholder Image"></div>
                 <h6>Most Sold Item</h6>
                 <p class="metric">Windshield Glass</p>
               </div>
               <div class="card text-left">
-                <div class="card-image"> <img src="../assets/svg/nixar-logo-red.svg" class="card-img" alt="Placeholder Image"></div>
+                <div class="card-image"> <img src="assets/svg/nixar-logo-red.svg" class="card-img" alt="Placeholder Image"></div>
                 <h6>Best-selling Item (by revenue)</h6>
                 <p class="metric">Wiper</p>
               </div>
               <div class="card text-left">
-                <div class="card-image"> <img src="../assets/svg/nixar-logo-red.svg" class="card-img" alt="Placeholder Image"></div>
+                <div class="card-image"> <img src="assets/svg/nixar-logo-red.svg" class="card-img" alt="Placeholder Image"></div>
                 <h6>Best-selling Category</h6>
                 <p class="metric">Glass</p>
               </div>
               <div class="card text-left">
-                <div class="card-image"> <img src="../assets/svg/nixar-logo-red.svg" class="card-img" alt="Placeholder Image"></div>
+                <div class="card-image"> <img src="assets/svg/nixar-logo-red.svg" class="card-img" alt="Placeholder Image"></div>
                 <h6>Low Stock Items</h6>
                 <p class="metric">9</p>
               </div>

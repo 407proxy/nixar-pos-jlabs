@@ -38,7 +38,49 @@
                 ];
             }
         }
-        // TODO: updateInfo
+
+        public function update(array $UpdateData) {
+            try {
+                $Sql = "UPDATE nixar_products SET product_name = ?, 
+                    product_material_id = ?, 
+                    product_img_url = ?,
+                    product_supplier_id = ?, 
+                    mark_up = ? 
+                WHERE nixar_product_sku = ?
+                AND is_deleted = 0";
+    
+                $Stmt = $this->Conn->prepare($Sql);
+                $Stmt->bind_param(
+                    "sisiis", 
+                    $UpdateData['product_name'], 
+                    $UpdateData['product_material_id'],
+                    $UpdateData['product_img_url'],
+                    $UpdateData['product_supplier_id'],
+                    $UpdateData['mark_up'],
+                    $UpdateData['nixar_product_sku']
+                );
+
+                $Stmt->execute();
+                if ($Stmt->affected_rows === 0) {
+                    $Stmt->close();
+                    return [
+                        'success' => false,
+                        'message' => "No product found with SKU {$UpdateData['nixar_product_sku']}."
+                    ];
+                }
+                
+                $Stmt->close();
+                return [
+                    'success' => true,
+                    'message' => "Product with SKU " . $UpdateData['nixar_product_sku'] . " successfully updated."
+                ];
+            } catch (Exception $E) {
+                return [
+                    'success' => false,
+                    'message' => "Error: ". $E->getMessage()
+                ];
+            }
+        }
         // remove
         public function remove(string $ProductSku) {
             try {
@@ -48,11 +90,14 @@
                 $Stmt = $this->Conn->prepare($Sql);
                 $Stmt->bind_param("s", $ProductSku);
     
-                $Status = $Stmt->execute();
-                if(!$Status) {
-                    throw new Exception("Failed to execute query: " . $this->Conn->error);
+                $Stmt->execute();
+                if ($Stmt->affected_rows === 0) {
+                    $Stmt->close();
+                    return [
+                        'success' => false,
+                        'message' => "No product found with SKU { $ProductSku }."
+                    ];
                 }
-    
                 $Stmt->close();
     
                 return [
@@ -81,13 +126,16 @@
                     $ProductData['image_url'],
                     $ProductData['mark_up']
                 );
-                $Status = $Stmt->execute();
+                $Stmt->execute();
                 $Stmt->close();
     
-                return $Status;
+                return [
+                    'success' => true,
+                    'message' => "Product with SKU {$ProductData['product_sku']} successfully created."
+                ];
             } catch (Exception $E) {
                 return [
-                    "status" => "error",
+                    "success" => false,
                     "message" => $E->getMessage()
                 ];
             }
@@ -112,10 +160,13 @@
                 $Rows = $Result->fetch_all(MYSQLI_ASSOC);
                 $Stmt->close();
     
-                return $Rows;
+                return [
+                    'success' => true,
+                    'data' => $Rows
+                ];
             } catch (Exception $E) {
                 return [
-                    "status" => "error",
+                    "success" => false,
                     "message" => $E->getMessage()
                 ];
             }
@@ -144,7 +195,7 @@
                 return $Result;
             } catch (Exception $E) {
                 return [
-                    "status" => "error",
+                    "success" => false,
                     "message" => $E->getMessage()
                 ];
             }

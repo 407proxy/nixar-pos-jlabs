@@ -9,7 +9,7 @@
   SessionManager::checkSession();
 ?>
 
-<div class="container-fluid p-0 m-0 py-3 px-4 d-flex flex-column" style="min-height:100vh;">
+<div class="container-fluid p-0 m-0 py-3 px-4 d-flex flex-column">
   <div class="w-100 d-flex justify-content-between align-items-center mb-3">
     <h2 class="fw-bold">Create Invoice</h2>
     <a href="javascript:window.history.back()" class="text-muted">X</a>
@@ -77,9 +77,9 @@
     </div>
 
     <div class="col-8" style="background: rgba(0,0,0,0.45); display:flex; align-items:center; justify-content:center;">
-      <div style="background:white; width:360px; height:720px; display:flex; align-items:center; justify-content:center;">
-        <span>[Receipt Preview]</span>
-      </div>
+<!--      <div style="background:white; width:360px; height:720px; display:flex; align-items:center; justify-content:center;">-->
+<!--        <span>[Receipt Preview]</span>-->
+<!--      </div>-->
     </div>
   </div>
 </div>

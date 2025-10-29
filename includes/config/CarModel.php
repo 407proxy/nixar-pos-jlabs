@@ -6,7 +6,7 @@
             $this->Conn = $Conn;
         }
 
-        public function add($CarModelData, $ReturnId = false) {
+        public function add($CarModelData) {
             // Check for duplicates
             $Check = "SELECT car_model_id FROM car_models WHERE make = ? AND model = ? AND year = ? AND type = ?";
             $CheckStmt = $this->Conn->prepare($Check);
@@ -20,7 +20,7 @@
             $CheckDuplicate = $CheckStmt->get_result();
             if ($Duplicate = $CheckDuplicate->fetch_assoc()) {
                 $CheckStmt->close();
-                return $ReturnId ? (int)$Duplicate['car_model_id'] : true;
+                return (int)$Duplicate['car_model_id'];
             }
             // Perform INSERT only if its a unique entry;
             $CarModelSql = "INSERT INTO car_models(make, model, year, type) VALUES(?, ?, ?, ?)";
@@ -36,7 +36,7 @@
             $Id = $Stmt->insert_id;
             $Stmt->close();
 
-            return $ReturnId ? $Id : true;
+            return $Id;
         }
     }
 

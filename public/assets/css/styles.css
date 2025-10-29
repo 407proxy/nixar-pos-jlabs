@@ -328,6 +328,24 @@ a {
     border-radius: 6px;
 }
 
+/* Checkout items table */
+.checkout-items-table {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0;
+}
+.checkout-items-table thead th,
+.checkout-items-table tbody td {
+    border: 1px solid rgba(0,0,0,0.06);
+    padding: 10px 12px;
+    vertical-align: middle;
+}
+.checkout-items-table thead th {
+    background: transparent;
+    font-weight: 600;
+}
+
+
 /* ===== PRODUCT MODALS ===== */
 .btn-dashed, .btn-dashed:hover {
 	border: 2px dashed var(--text-muted);
@@ -480,4 +498,16 @@ td .btn {
 .metric {
   font-size: 1.8rem;
   font-weight: 700;
+}
+
+.table-fixed {
+    table-layout: fixed;
+    width: 100%;
+}
+
+.table-fixed td,
+.table-fixed th {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
 }

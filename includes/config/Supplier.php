@@ -15,7 +15,7 @@
             return $Result->fetch_all(MYSQLI_ASSOC);
         }
 
-        public function add($SupplierInfo, $ReturnId = false) {
+        public function add($SupplierInfo) {
             $SupplierSql = "INSERT INTO product_suppliers(nixar_product_sku, supplier_id, base_price) VALUES(?, ?, ?)";
             $Stmt = $this->Conn->prepare($SupplierSql);
             if (!$Stmt) {
@@ -27,7 +27,35 @@
             $Id = $Stmt->insert_id;
             $Stmt->close();
 
-            return $ReturnId ? $Id : true;
+            return $Id;
+        }
+
+        public function updateProductSupplier($SupplierInfo) {
+            try {
+                $Sql = "UPDATE product_suppliers SET supplier_id = ?, base_price = ? WHERE nixar_product_sku = ?";
+                $Stmt = $this->Conn->prepare($Sql);
+                if (!$Stmt) {
+                    throw new Exception('Failed to prepare INSERT statement: ' . $this->Conn->error);
+                }
+                $Stmt->bind_param(
+                    "ids",
+                    $SupplierInfo['supplier_id'],
+                    $SupplierInfo['base_price'],
+                    $SupplierInfo['nixar_product_sku']
+                );
+                $Stmt->execute();
+                $Stmt->close();
+
+                return [
+                    'success' => true,
+                    'message' => "Successfully updated product supplier of: {$SupplierInfo['nixar_product_sku']}"
+                ];
+            } catch (Exception $E) {
+                return [
+                    'success' => false,
+                    'message' => $E->getMessage()
+                ];
+            }
         }
     }
 ?>

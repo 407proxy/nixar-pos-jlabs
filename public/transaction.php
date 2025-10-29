@@ -25,14 +25,14 @@
                 <div class="w-100 h-100 d-flex flex-column gap-2">
                     <div class="w-100 d-flex flex-shrink-0 justify-content-between align-items-center">
                         <h2>Product List</h2>
-                      <div class="input-wrapper">
+                      <div class="input-wrapper position-relative">
                         <input
                           type="text"
                           placeholder="Search"
-                          class="text-input"
+                          class="text-input pe-4"
                           id="search-bar"
                         />
-                        <i class="fa-solid fa-magnifying-glass" id="icon-magnifying"></i>
+                        <i class="fa-solid fa-magnifying-glass position-absolute top-50 translate-middle-y me-2 end-0" id="icon-magnifying"></i>
                       </div>
                     </div>
                     <div class="w-full d-flex flex-shrink-0 justify-content-between align-items-center gap-2 z-1 bg-white pb-2">
@@ -62,11 +62,15 @@
             <div class="col-4" style="height: 98%">
                 <div class="w-100 h-100 d-flex flex-column justify-content-start gap-2 rounded-3 border p-3">
                     <h2>Order Detail</h2>
-                    <p>0 items selected</p>
-                    <div class="flex-grow-1 border shadow-sm rounded-2">
+                    <p class="total-order">0 selected</p>
+                    <div id="order-container" class="flex-grow-1 border shadow-sm rounded-2 px-2 d-flex flex-column justify-content-start gap-2 overflow-y-auto">
 
                     </div>
-                    <button class="btn" onclick="window.location.href='checkout.php'">
+                    <div class="w-100 d-flex justify-content-between align-items-center">
+                        <p>Total Price:</p>
+                        <strong id="total-price">₱ 0</strong>
+                    </div>
+                    <button type="button" class="btn" data-bs-toggle="modal" data-bs-target="#checkoutModal">
                         Proceed to Payment
                         <i class="fa-solid fa-chevron-right text-white"></i>
                     </button>
@@ -74,6 +78,8 @@
             </div>
         </div>
     </div>
+    <!-- =============== CHECKOUT MODAL =============== -->
+    <?php include_once '../includes/components/checkout-modal.php'?>
     <!-- =============== TRANSACTION PAGE SPECIFIC SCRIPT =============== -->
     <script src="assets/js/transaction.js?v=<?=filemtime('assets/js/transaction.js')?>"></script>
 <?php include_once '../includes/footer.php'; ?>
