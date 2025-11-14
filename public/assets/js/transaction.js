@@ -10,6 +10,7 @@ const filterTiles = document.querySelectorAll('.filter-tile');
 const filterCategory = document.getElementById('category');
 const orderContainer = document.getElementById('order-container');
 const totalPrice = document.getElementById('total-price');
+const itemCount = document.querySelector('.total-order');
 
 const LIMIT = 10;
 let currentPage = 1;
@@ -40,7 +41,7 @@ const fetchCategoryProducts = async (category) => {
         console.log(data.products);
         renderProducts(data.products);
     } catch (err) {
-        console.error(err);
+        showToast(err.message, 'error');
     }
 };
 
@@ -140,7 +141,6 @@ const updateQuantityDisplay = (btn, sku) => {
     const totalItems = Object.values(cart).reduce((sum, item) => sum + item.quantity, 0);
     const totalCost = Object.values(cart).reduce((sum, item) => sum + (item.price * item.quantity), 0);
 
-    const itemCount = document.querySelector('.total-order');
     itemCount.textContent = `${totalItems} selected`;
     totalPrice.textContent = `₱ ${totalCost}`;
 }
@@ -277,7 +277,7 @@ const searchProducts = (page = 1) => {
             renderProducts(data.inventory);
         })
         .catch(err => {
-            console.error(err);
+            showToas(err.message, 'error');
         })
 }
 
@@ -300,10 +300,14 @@ const handleCheckout = async (checkoutForm, endpoint, checkoutData) => {
 
         modal.hide();
         checkoutForm.reset();
-        console.log('Checkout success:', result.message);
-        fetchCategoryProducts(all);
+        showToast('Checkout successful.', 'info');
+        fetchCategoryProducts('all');
+        // Reset Checkout field
+        itemCount.textContent = '0 selected';
+        orderContainer.innerHTML = '';
+        totalPrice.textContent = '₱ 0';
     } catch(err) {
-        console.error(err.message);
+        showToast(err.message, 'error');
     }
 }
 

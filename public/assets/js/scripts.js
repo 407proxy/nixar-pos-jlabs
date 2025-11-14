@@ -50,17 +50,18 @@ const showToast = (header, message, type = "info") => {
     const toastMessage = document.createElement('span');
     toastMessage.style.fontSize = '12px';
     toastMessage.textContent = message;
+    toastMessage.style.color = 'white';
     toastMessageContainer.appendChild(toastMessage);
 
     const toastButton = document.createElement('button');
     toastButton.className = "rounded-circle flex-shrink-0 d-flex align-items-center justify-content-center ms-2";
-    toastButton.innerHTML = `<i class="fa-solid fa-xmark"></i>`;
+    toastButton.innerHTML = `<i class="fa-solid fa-xmark text-white"></i>`;
 
     const icon =
         type === 'success'
             ? "fa-solid fa-check"
             : type === 'error'
-                ? "fa-solid fa-x"
+                ? "fa-solid fa-triangle-exclamation"
                 : "fa-regular fa-lightbulb";
 
     toast.className = `toast ${type} px-2 py-1 d-flex align-items-center fs-7`;
@@ -80,7 +81,7 @@ const showToast = (header, message, type = "info") => {
     setTimeout(() => toast.classList.add('show'), 50);
 
     // Remove after 3s
-    // const timeoutId = setTimeout(() => hideToast(toast), 2000);
+    const timeoutId = setTimeout(() => hideToast(toast), 2000);
 
     // Handle manual close
     toast.querySelector('button').addEventListener('click', () => {

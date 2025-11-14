@@ -85,6 +85,7 @@
     </div>
     <!-- =============== CHECKOUT MODAL =============== -->
     <?php include_once '../includes/components/checkout-modal.php'?>
+    <?php include_once '../includes/components/toast-container.php'; ?>
     <!-- =============== TRANSACTION PAGE SPECIFIC SCRIPT =============== -->
     <script src="assets/js/transaction.js?v=<?=filemtime('assets/js/transaction.js')?>"></script>
 <?php include_once '../includes/footer.php'; ?>

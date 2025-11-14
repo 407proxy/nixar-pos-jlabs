@@ -19,7 +19,7 @@
         $MaterialId = $Sanitized['product_material_id'];
         $StockCount = $Sanitized['stock_count'];
         $Markup = $Sanitized['mark_up'];
-        $SupplierId = $Sanitized['product_supplier_id'];
+        $SupplierId = $Sanitized['supplier_id'];
         $BasePrice = $Sanitized['base_price'];
         $Threshold = $Sanitized['min_threshold'];
         // Car Compatibility
@@ -40,6 +40,7 @@
         // Save image to `../assets/img/uploads/` and store base image url
         $UploadFileName = Image::uploadToDirectory($Image);
 
+        $Conn->autocommit(false);
         $Conn->begin_transaction();
         try {
             $Product = new NixarProduct($Conn);
@@ -75,7 +76,6 @@
                 'min_threshold' => $Threshold
             ];
             $InventoryResult = $Inventory->create($InventoryMeta);
-            error_log("Inventory creation status: " . var_export($InventoryStatus, true));
             if (!$InventoryResult['success']) {
                 throw new Exception('Failed to add inventory product.');
             }
@@ -97,6 +97,8 @@
             error_log("Error: " . $E->getMessage());
             error_log("Trace: " . $E->getTraceAsString());
             echo json_encode(['success' => false, 'message' => $E->getMessage()]);
+        } finally {
+            $Conn->autocommit(true);
         }
     }
 ?>

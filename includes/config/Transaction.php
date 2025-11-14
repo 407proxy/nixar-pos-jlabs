@@ -96,7 +96,7 @@
                         ON t.receipt_id = r.receipt_id 
                     JOIN receipt_details rd 
                         ON r.receipt_id = rd.receipt_id
-                    WHERE t.created_at BETWEEN ? AND ?
+                    WHERE t.created_at >= ? AND t.created_at <= ?
                     GROUP BY t.transaction_id, t.customer_id, t.created_at, t.payment_method, u.name, r.created_at, r.total_amount, r.discount 
                     ORDER BY t.created_at DESC";
             

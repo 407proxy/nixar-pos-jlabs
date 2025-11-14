@@ -6,12 +6,7 @@
 
     // Default to (2000-01-01 00:00:00) as start and the current date as end if no input is provided
     $Start = !empty($_GET['start']) ? InputValidator::sanitizeData($_GET['start']) : '2000-01-01 00:00:00';
-    $End   = !empty($_GET['end'])   ? InputValidator::sanitizeData($_GET['end']) : date("Y-m-d H:i:s");
-
-    // Append end time when date format is YYYY-MM-DD
-    if ($End && strlen($End) === 10) {
-        $End .= " 23:59:59";
-    }
+    $End   = !empty($_GET['end'])   ? InputValidator::sanitizeData($_GET['end']) : date("Y-m-d") . " 23:59:59";
 
     $Conn = DatabaseConnection::getInstance()->getConnection();
     try {

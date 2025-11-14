@@ -1,5 +1,5 @@
-<!-- AUTHORS: Raean Chrissean R. Tamayo, John Roland Octavio -->
 <?php
+    /* AUTHORS: Raean Chrissean R. Tamayo, John Roland Octavio  */
     header('Content-Type: application/json');
     include_once __DIR__ . '/../../includes/config/_init.php';
     SessionManager::checkSession();
@@ -20,6 +20,6 @@
         echo json_encode(['success' => false, 'message' => 'Error fetching data.']);
         exit;
     }
-
-    echo json_encode(['success' => true, 'data' => $fetchResult]);
+    
+    echo json_encode($FetchResult);
 ?>
