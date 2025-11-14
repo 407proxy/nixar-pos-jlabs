@@ -1,16 +1,17 @@
+<!-- AUTHORS: Raean Chrissean R. Tamayo, -->
 <?php
-  // Configuration
-  $mode = $mode ?? 'add';
-  $modalId = $mode === 'add' ? 'addProductModal' : 'editProductModal';
-  $modalTitle = $mode === 'add' ? 'Add Product' : 'Edit Product';
-  $formId = $mode === 'add' ? 'addProductForm' : 'editProductForm';
-  $prefix = $mode === 'edit' ? 'edit' : '';
-  $submitBtnText = $mode === 'add' ? 'Add Product' : 'Update Product';
-  $showSteps = $mode === 'add'; // Only show steps for add mode
-  $EndPoint = $mode === 'add' ? 'handle_add_product.php' : 'handle_edit_product.php';
-  
-  $Product = new NixarProduct($Conn);
-  $ProductMaterials = $Product->fetchMaterials();
+// Configuration
+$mode = $mode ?? 'add';
+$modalId = $mode === 'add' ? 'addProductModal' : 'editProductModal';
+$modalTitle = $mode === 'add' ? 'Add Product' : 'Edit Product';
+$formId = $mode === 'add' ? 'addProductForm' : 'editProductForm';
+$prefix = $mode === 'edit' ? 'edit' : '';
+$submitBtnText = $mode === 'add' ? 'Add Product' : 'Update Product';
+$showSteps = true;
+$EndPoint = $mode === 'add' ? 'handle_add_product.php' : 'handle_edit_product.php';
+
+$Product = new NixarProduct($Conn);
+$ProductMaterials = $Product->fetchMaterials();
 ?>
 
 <div class="modal fade" id="<?= $modalId ?>" tabindex="-1" aria-labelledby="<?= $modalId ?>Label" aria-hidden="true">
@@ -20,7 +21,7 @@
         <h1 class="modal-title fs-4" id="<?= $modalId ?>Label"><?= $modalTitle ?></h1>
         <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
       </div>
-
+      
       <div class="modal-body">
         <form method="POST" action="/nixar-pos/public/handlers/<?= $EndPoint ?>" enctype="multipart/form-data" id="<?= $formId ?>">
           <?php if($mode === 'edit'): ?>
@@ -40,7 +41,7 @@
                 <?php endif; ?>
               </div>
             </div>
-
+            
             <!-- ================= Product Metadata - Related Fields ================= -->
             <div class="mb-3 d-flex gap-3">
               <div class="w-50">
@@ -102,60 +103,65 @@
                 </div>
               </div>
             </div>
+          
           </div>
-
-          <!-- STEP 2: Car Compatibility Info (only for add mode) -->
+          <!-- STEP 2: Display -->
           <?php if ($showSteps): ?>
-          <div id="<?= $prefix ?>step2" class="step" style="display:none;">
-            <h5 class="mb-3">Compatible Cars Information</h5>
-            <div class="mb-3">
-              <div id="<?= $prefix ?>carModelContainer">
-                <div class="d-flex align-items-stretch gap-2 mb-2 car-model-input">
-                  <div class="w-50">
-                    <label class="form-label">Make</label>
-                    <input type="text" class="text-input w-100" placeholder="Enter car make" name="car_make[]" required>
+            <div id="<?= $prefix ?>step2" class="step" style="display:none;">
+              
+              <?php if ($mode === 'add'): // 'add' mode logic (existing) ?>
+                <h5 class="mb-3">Compatible Cars Information</h5>
+                <div class="mb-3">
+                  <div id="<?= $prefix ?>carModelContainer">
+                    <div class="d-flex align-items-stretch gap-2 mb-2 car-model-input">
+                      <div class="w-50">
+                        <label class="form-label">Make</label>
+                        <input type="text" class="text-input w-100" placeholder="Enter car make" name="car_make[]" required>
+                      </div>
+                      <div class="w-50">
+                        <label class="form-label">Model</label>
+                        <input type="text" class="text-input w-100" placeholder="Enter car model" name="car_model[]" required>
+                      </div>
+                      <div class="w-50">
+                        <label class="form-label">Year</label>
+                        <input type="number" class="text-input w-100" min="1900" max="2050" placeholder="Year" name="car_year[]" required>
+                      </div>
+                      <div class="w-50">
+                        <label for="<?= $prefix ?>carTypes" class="form-label">Car Type</label>
+                        <select class="form-select" id="<?= $prefix ?>carTypes" name="car_type[]" data-car-types='<?= json_encode($CarTypes); ?>' required>
+                          <option value="" disabled>Car Type</option>
+                          <?php foreach($CarTypes as $Type): ?>
+                            <option value="<?= $Type ?>"><?= $Type ?></option>
+                          <?php endforeach; ?>
+                        </select>
+                      </div>
+                      <div class="d-flex align-items-end">
+                        <button type="button" class="btn btn-link text-danger remove-model" style="visibility:hidden;">
+                          <i class="fa-solid fa-trash"></i>
+                        </button>
+                      </div>
+                    </div>
                   </div>
-                  <div class="w-50">
-                    <label class="form-label">Model</label>
-                    <input type="text" class="text-input w-100" placeholder="Enter car model" name="car_model[]" required>
-                  </div>
-                  <div class="w-50">
-                    <label class="form-label">Year</label>
-                    <input type="number" class="text-input w-100" min="1900" max="2050" placeholder="Year" name="car_year[]" required>
-                  </div>
-                <div class="w-50">
-                  <label for="<?= $prefix ?>carTypes" class="form-label">Car Type</label>
-                  <select class="form-select" id="<?= $prefix ?>carTypes" name="car_type[]" data-car-types='<?= json_encode($CarTypes); ?>' required>
-                    <option value="" disabled>Car Type</option>  
-                    <?php foreach($CarTypes as $Type): ?>
-                      <option value="<?= $Type ?>"><?= $Type ?></option>
-                    <?php endforeach; ?>
-                  </select>
+                  <button type="button" class="btn-dashed btn w-100" id="<?= $prefix ?>addCarModelBtn">+ Add Model</button>
                 </div>
-                  <div class="d-flex align-items-end">
-                    <button type="button" class="btn btn-link text-danger remove-model" style="visibility:hidden;">
-                      <i class="fa-solid fa-trash"></i>
-                    </button>
-                  </div>
+              <?php else: // 'edit' mode logic ?>
+                <h5 class="mb-3">Existing Compatible Cars</h5>
+                <div id="editCompatibleCarsContainer" class="mb-3" style="max-height: 400px; overflow-y: auto;">
+                  <p>Loading compatible cars...</p>
                 </div>
-              </div>
-              <button type="button" class="btn-dashed btn w-100" id="<?= $prefix ?>addCarModelBtn">+ Add Model</button>
+              <?php endif; ?>
+            
             </div>
-          </div>
           <?php endif; ?>
         </form>
       </div>
-
+      
       <div class="modal-footer d-flex justify-content-end">
-        <?php if ($showSteps): ?>
-          <button type="button" class="btn" id="<?= $prefix ?>prevStep" style="display:none;">Back</button>
-          <button type="button" class="btn" id="<?= $prefix ?>nextStep">Next</button>
-          <button type="submit" class="btn" form="<?= $formId ?>" id="submitProduct" style="display:none;"><?= $submitBtnText ?></button>
-        <?php else: ?>
-          <button type="submit" class="btn" form="<?= $formId ?>" id="editProductButton"><?= $submitBtnText ?></button>
-        <?php endif; ?>
+        <button type="button" class="btn" id="<?= $prefix ?>prevStep" style="display:none;">Back</button>
+        <button type="button" class="btn" id="<?= $prefix ?>nextStep">Next</button>
+        <button type="submit" class="btn" form="<?= $formId ?>" id="<?= $prefix ?>submitProduct" style="display:none;"><?= $submitBtnText ?></button>
       </div>
+    
     </div>
   </div>
 </div>
-

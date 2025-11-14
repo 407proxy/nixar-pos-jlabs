@@ -6,7 +6,7 @@
             $this->Conn = $Conn;
         }
 
-        public function fetchPaginated(int $Limit = 10, int $Offset = 0) {
+        public function fetchPaginated(?int $Limit = null, int $Offset = 0) {
             try {
                 $Sql = "SELECT np.*, 
                                pm.*,
@@ -19,14 +19,18 @@
                             ON ps.nixar_product_sku = np.nixar_product_sku
                         JOIN inventory i
                             ON np.nixar_product_sku = i.product_sku
-                        WHERE np.is_deleted = 0
-                        LIMIT ? OFFSET ?";
+                        WHERE np.is_deleted = 0";
+                if ($Limit !== null) {
+                    $Sql .= " LIMIT ? OFFSET ?";
+                }
                 // Execute SQL Query
                 $Stmt = $this->Conn->prepare($Sql);
                 if(!$Stmt) {
                     throw new Exception("Failed to execute query: " . $this->Conn->error);
                 }
-                $Stmt->bind_param("ii", $Limit, $Offset);
+                if ($Limit !== null) {
+                    $Stmt->bind_param("ii", $Limit, $Offset);
+                }
                 $Stmt->execute();
 
                 $Result = $Stmt->get_result();
@@ -180,6 +184,8 @@
                 $Sql = "SELECT COUNT(np.nixar_product_sku) AS product_count,
                                pm.category
                         FROM nixar_products np
+                        JOIN product_suppliers ps
+                            ON np.product_supplier_id = ps.product_supplier_id
                         JOIN product_materials pm
                             ON np.product_material_id = pm.product_material_id
                         WHERE np.is_deleted = 0
@@ -226,6 +232,45 @@
                 throw new Exception('Failed to execute query: ' . $this->Conn->error);
             }
             return $Result->fetch_all(MYSQLI_ASSOC);
+        }
+
+        public function fetchCompatible(string $ProductSku) {
+            try {
+                $Sql = "SELECT 
+                    cm.make, 
+                    cm.model, 
+                    cm.year, 
+                    cm.type, 
+                    np.product_name, 
+                    np.nixar_product_sku 
+                FROM car_models cm 
+                JOIN product_compatibility pc 
+                    ON pc.car_model_id = cm.car_model_id 
+                JOIN nixar_products np 
+                    ON pc.nixar_product_sku = np.nixar_product_sku 
+                WHERE np.nixar_product_sku = ?";
+                
+                $Stmt = $this->Conn->prepare($Sql);
+                if (!$Stmt) {
+                    throw new Exception('Failed to prepare SELECT statement: ' . $this->Conn->error);
+                }
+                $Stmt->bind_param("s", $ProductSku);
+                $Stmt->execute();
+
+                $Result = $Stmt->get_result();
+                $Rows = $Result->fetch_all(MYSQLI_ASSOC);
+                $Stmt->close();
+
+                return [
+                    'success' => true,
+                    'rows' => $Rows
+                ];
+            } catch (Exception $E) {
+                return [
+                    'success' => false,
+                    'message' => $E->getMessage()
+                ];
+            }
         }
     }
 

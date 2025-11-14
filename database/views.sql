@@ -39,14 +39,13 @@ GROUP BY np.nixar_product_sku, ps.product_supplier_id;
 
 
 -- ============== INVENTORY REPORT LIST METRICS ==============
-
 CREATE OR REPLACE VIEW count_low_stock_items_view AS  
 SELECT  
     COUNT(np.nixar_product_sku) AS low_stock
 FROM inventory i  
 JOIN nixar_products np ON i.nixar_product_sku = np.nixar_product_sku 
 JOIN product_materials pm ON np.product_material_id = pm.product_material_id 
-WHERE i.current_stock <= i.min_threshold 
+WHERE i.current_stock <= i.min_threshold;
 
 CREATE OR REPLACE VIEW low_stock_items_view AS  
 SELECT  
@@ -101,14 +100,13 @@ LIMIT 5;
 -- ============== SALES REPORT METRICS ==================
 CREATE OR REPLACE VIEW sales_report_view AS 
 SELECT 
-	SUM(total_amount) AS total_revenue, 
+	ROUND(SUM(total_amount), 2) AS total_revenue, 
 	COUNT(receipt_id) AS total_transactions,
-	AVG(total_amount) AS avg_transaction_value,
+	ROUND(AVG(total_amount), 2) AS avg_transaction_value,
     0 AS profit_performance
 FROM receipts AS r;
 
 -- ============== SALES REPORT LIST METRICS ==============
-
 CREATE OR REPLACE VIEW category_performance_view AS 
 SELECT 
     category, 

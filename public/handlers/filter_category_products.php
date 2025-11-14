@@ -1,4 +1,8 @@
 <?php 
+    /* Author: John Roland Octavio
+    * Fetches products from inventory optionally filtered by category,
+    * calculates final prices, and returns the result as JSON.
+    */
     header("Content-Type: application/json");
     include_once __DIR__ . '/../../includes/config/_init.php';  
     SessionManager::checkSession();

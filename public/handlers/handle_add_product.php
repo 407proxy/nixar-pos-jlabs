@@ -1,4 +1,9 @@
 <?php 
+    /* Author: John Roland Octavio
+    * Handles adding a new product: saves product details, 
+    * inventory, supplier info, car compatibility, and product image; 
+    * returns JSON success/error response
+    */
     header("Content-Type: application/json");
     include_once __DIR__ . '/../../includes/config/_init.php';  
     SessionManager::checkSession();

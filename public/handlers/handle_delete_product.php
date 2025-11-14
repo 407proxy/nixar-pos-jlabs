@@ -1,4 +1,8 @@
 <?php 
+    /* Author: John Roland Octavio
+    * Handles deletion of a product by SKU; validates input, calls product removal, 
+    * and returns JSON success/error response.
+    */
     header("Content-Type: application/json");
     include_once __DIR__ . '/../../includes/config/_init.php';  
     SessionManager::checkSession();

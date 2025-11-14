@@ -1,7 +1,11 @@
+<!-- AUTHORS: Raean Chrissean R. Tamayo, -->
 <?php
-    $PageTitle = "Login | NIXAR POS";
-    $CssPath = "assets/css/styles.css";
-    $JSPath = "assets/js/scripts.js";
+  include_once __DIR__ . '/../includes/config/_init.php';  
+  $PageTitle = "Login | NIXAR POS";
+  $CssPath = "assets/css/styles.css";
+  $JSPath = "assets/js/scripts.js";
+
+  SessionManager::checkSession();
 ?>
 <?php include_once '../includes/head.php'; ?>
 <div class="container-fluid p-0 m-0 row h-100">

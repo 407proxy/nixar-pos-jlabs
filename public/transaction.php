@@ -1,3 +1,8 @@
+<!--
+    AUTHOR/S:
+    - Jul Leo Javellana
+-->
+
 <?php
     include_once __DIR__ . '/../includes/config/_init.php';  
 
@@ -24,7 +29,7 @@
             <div class="col-8" style="height: 98%">
                 <div class="w-100 h-100 d-flex flex-column gap-2">
                     <div class="w-100 d-flex flex-shrink-0 justify-content-between align-items-center">
-                        <h2>Product List</h2>
+                      <h2>Product List</h2>
                       <div class="input-wrapper position-relative">
                         <input
                           type="text"

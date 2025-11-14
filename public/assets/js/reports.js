@@ -1,9 +1,93 @@
-/* ================= REPORT REFERENCES ================= */
+/* Author: Ignatius Warren Benjamin D. Javelona, Jared Ramon Elizan */
+
+/* ================= METRICS REFERENCES ================= */
+const totalRevenue = document.getElementById('totalRevenue');
+const numOfTransactions = document.getElementById('numOfTransactions');
+const avgTranValue = document.getElementById('avgTransactionValue');
+const profitPerformance = document.getElementById('profitPerformance')
+const bestSellingRev = document.getElementById('best-selling-revenue');
+const bestSellingCat = document.getElementById('best-selling-category');
+const lowStock = document.getElementById('low-stock');
+const mostSoldItem = document.getElementById('most-sold-item');
+
+const metric_config = [
+{ key: 'all_sales_metric', 
+  reference: {
+      total_revenue: totalRevenue,
+      total_transactions: numOfTransactions,
+      avg_transaction_value: avgTranValue,
+      profit_performance: profitPerformance
+    },
+  prefix: { 
+      total_revenue: '₱', 
+      avg_transaction_value: '₱' 
+    },
+  suffix: { 
+      profit_performance: '%' 
+    }
+  },
+{ key: 'inv_metric_best_item_category', 
+  reference: {
+      product_name: bestSellingRev,
+      category: bestSellingCat
+    }
+  },
+{ key: 'inv_metric_low_stock', 
+  reference: {
+      low_stock: lowStock 
+    } 
+  },
+{ key: 'inv_metric_most_sold',
+  reference: { 
+    product_name: mostSoldItem 
+  } 
+}
+];
+
+/* ================= LIST METRICS REFERENCES ================= */
 const categoryTable = document.getElementById('sales-table-category');
 const timeTable = document.getElementById('sales-table-time');
 const soldTable = document.getElementById('inventory-table-sold');
 const sellingTable = document.getElementById('inventory-table-selling');
-const stockTable = document.getElementById('inventory-table-sock');
+const stockTable = document.getElementById('inventory-table-stock');
+
+const list_metric_config = [
+  { key: 'sales_limetric_time', 
+    table: timeTable, 
+    value: [
+      'hour_label',
+      'total_orders'
+    ] 
+  },
+  { key: 'sales_limetric_category', 
+    table: categoryTable, 
+    value: [
+      'category', 
+      'category_performance'
+    ] 
+  },
+  { key: 'inv_limetric_most_sold', 
+    table: soldTable, 
+    value: [
+      'product_name', 
+      'total_quantity_sold'
+    ] 
+  },
+  { key: 'inv_limetric_best_selling', 
+    table: sellingTable,
+    value: [
+      'product_name', 
+      'grouped_price'
+    ] 
+  },
+  { key: 'inv_limetric_low_stock', 
+    table: stockTable, 
+    value: [
+      'product_name', 
+      'current_stock'
+    ] 
+  }
+];
 
 //for switching from inventory to sales(in dropdown)/vice versa
 document.getElementById('reportType').addEventListener('change', function() {
@@ -18,227 +102,107 @@ document.getElementById('reportType').addEventListener('change', function() {
     }
 });
 
-const fetchSalesMetrics = async () => {
-    try {
-        const response = await fetch('handlers/fetch_reports_metrics.php');
-        const data = await response.json();
+const populateMetrics = (data) => {
+  metric_config.forEach(({ key, reference, prefix = {}, suffix = {} }) => {
+    const metricData = data[key] ?? {};
 
-        if (Object.keys(data).length === 0) {
-            console.log("No metrics found");
-            document.getElementById('totalRevenue').innerText = 'No data';
-            document.getElementById('numOfTransactions').innerText = 'No data';
-            document.getElementById('avgTransactionValue').innerText = 'No data';
-            document.getElementById('profitPerformance').innerText = 'No data';
-            return;
-        }
-        document.getElementById('totalRevenue').innerText = '₱' + data.total_revenue;
-        document.getElementById('numOfTransactions').innerText = data.total_transactions;
-        document.getElementById('avgTransactionValue').innerText = '₱' + data.avg_transaction_value;
-        document.getElementById('profitPerformance').innerText = data.profit_performance + '%';
-
-        console.log(data); 
-    } catch (err) {
-        console.error(err.message);
+    if (Object.keys(metricData).length === 0) {
+      console.log(`No data found for ${key}`);
+      Object.values(reference).forEach(i => i.innerText = 'No data');
+      return;
     }
+
+    Object.entries(reference).forEach(([key, ref]) => {
+      const value = metricData[key];
+      const isNumeric = !isNaN(value) && value && value !== '';
+      ref.innerText = !value ? 'No data found.' : `${prefix[key] ?? ''}${isNumeric ? Number(value).toLocaleString() : value}${suffix[key] ?? ''}`;
+    })
+  });
 };
 
-const fetchInventoryMetricRevenue = async () => {
-    try {
-        const response = await fetch('handlers/fetch_inventory_reports_metrics_revenue.php'); 
-        const data = await response.json();
+const fetchSalesInventoryMetrics = async () => {
+  try {
+    const response = await fetch('handlers/fetch_inventory_sales_metrics.php');
+    const data = await response.json();
 
-        if (Object.keys(data).length === 0) {
-            console.log("No metrics found");
-            document.getElementById('best-selling-revenue').innerText = 'No data';
-            document.getElementById('best-selling-category').innerText = 'No data';
-            return;
-        }
-        document.getElementById('best-selling-revenue').innerText = data.product_name;
-        document.getElementById('best-selling-category').innerText = data.category;
+    populateMetrics(data);  
 
-        console.log(data); 
-    } catch (err) {
-        console.error(err.message);
-    }
+    console.log(data); 
+  } catch (err) {
+    showToast("Failed to load key metrics", err.message, 'error');
+    console.error(err.message);
+  }
 };
 
-const fetchInventoryMetricStock = async () => {
-    try {
-        const response = await fetch('handlers/fetch_inventory_reports_stocks_count.php'); 
-        const data = await response.json();
 
-        if (Object.keys(data).length === 0) {
-            console.log("No metrics found");
-            document.getElementById('low-stock').innerText = 'No data';
-            return;
-        }
-        document.getElementById('low-stock').innerText = data.low_stock;
-
-        console.log(data); 
-    } catch (err) {
-        console.error(err.message);
-    }
-};
-
-const fetchInventoryMetricMostSold = async () => {
-    try {
-        const response = await fetch('handlers/fetch_inventory_reports_metrics_sold.php'); 
-        const data = await response.json();
-
-        if (Object.keys(data).length === 0) {
-            console.log("No metrics found");
-            document.getElementById('most-sold-item').innerText = 'No data';
-            return;
-        }
-        document.getElementById('most-sold-item').innerText = data;
-
-        console.log(data); 
-    } catch (err) {
-        console.error(err.message);
-    }
-};
-
-const generateSalesMetricCategory= (data) => {
+const generateTableRows = (data, keys) => {
   return data.map(item => `
     <tr>
-      <td>${item.category}</td>
-      <td>${item.category_performance}</td>
+      ${keys.map(i => `<td>${item[i] ?? ''}</td>`).join('')}
     </tr>
   `).join('\n');
 };
 
-const renderSalesMetricCategory = (tableElement, data) => {
-  const rowsHtml = generateSalesMetricCategory(data);
-  tableElement.innerHTML = rowsHtml;
+const renderTable = (tableElement, data, keys) => {
+  tableElement.innerHTML = generateTableRows(data, keys);
 };
 
-const fetchSalesMetricCategory = async () => {
-    try {
-        const response = await fetch('handlers/fetch_reports_category.php'); 
-        const data = await response.json();
+const fetchSalesInventoryListMetrics = async () => {
+  try {
+    const response = await fetch('handlers/fetch_inventory_sales_list_metrics.php');
+    const data = await response.json();
 
-        renderSalesMetricCategory(categoryTable, data);
+    list_metric_config.forEach(({ key, table, value }) => {
+      const metricData = data[key] ?? [];
+      if (table === stockTable && metricData.length === 0) {
+        table.innerHTML = 
+        `
+          <tr>
+            <td colspan="${value.length}" class="text-center"> All products are above minimum threshold. </td>
+          </tr>
+        `;
+      } else {
+        renderTable(table, metricData, value);
+      }
+    });
 
-    } catch (err) {
-        console.error(err);
-        table.innerHTML = `<tr><td colspan="2" style="text-align:center;">Error loading data</td></tr>`;
+  } catch (err) {
+    showToast("Failed to load detailed reports", err.message, 'error');
+    console.error(err);
+    list_metric_config.forEach(({ table, value }) => {
+      table.innerHTML = `<tr><td colspan="${value.length}" style="text-align:center;">Error loading data</td></tr>`;
+    });
+  }
+};
+
+/* ================= GENERATE REPORT REFERENCES ================= */
+const handleGenerateReport = async () => {
+  const start = document.getElementById('startDate').value.trim();
+  const end = document.getElementById('endDate').value.trim();
+
+  console.log(`start: ${start}, end: ${end}`)
+  try {
+    const response = await fetch(`handlers/handle_generate_report.php?start=${start}&end=${end}`);
+    const data = await response.json();
+
+    if(!data.success) {
+      throw new Error(data.message);
     }
-};
 
-const generateSalesMetricTime = (data) => {
-  return data.map(item => `
-    <tr>
-      <td>${item.hour_label}</td>
-      <td>${item.total_orders}</td>
-    </tr>
-  `).join('\n');
-};
+    // Save data in sessionStorage - temporary only until tab is closed
+    sessionStorage.setItem('reportData', JSON.stringify(data));
+    console.log('reportData in reports: ' + JSON.stringify(data))
+    sessionStorage.setItem('reportPeriod', JSON.stringify({'start': start, 'end': end }));
+    // redirect to 'report-preview.php' for reporting data preview
+    window.location.href = 'report-preview.php';
+    console.log(data);
 
-const renderSalesMetricTime = (tableElement, data) => {
-  const rowsHtml = generateSalesMetricTime(data);
-  tableElement.innerHTML = rowsHtml;
-};
-
-const fetchSalesMetricTime = async () => {
-    try {
-        const response = await fetch('handlers/fetch_reports_time.php'); 
-        const data = await response.json();
-
-        renderSalesMetricTime(timeTable, data);
-
-    } catch (err) {
-        console.error(err);
-        table.innerHTML = `<tr><td colspan="2" style="text-align:center;">Error loading data</td></tr>`;
-    }
-};
-
-const generateInventoryMetricSold = (data) => {
-  return data.map(item => `
-    <tr>
-      <td>${item.product_name}</td>
-      <td>${item.total_quantity_sold}</td>
-    </tr>
-  `).join('\n');
-};
-
-const renderInventoryMetricSold = (tableElement, data) => {
-  const rowsHtml = generateInventoryMetricSold(data);
-  tableElement.innerHTML = rowsHtml;
-};
-
-const fetchInventoryMetricSold = async () => {
-    try {
-        const response = await fetch('handlers/fetch_inventory_reports_sold.php'); 
-        const data = await response.json();
-
-        renderInventoryMetricSold(soldTable, data);
-    } catch (err) {
-        console.error(err);
-        table.innerHTML = `<tr><td colspan="2" style="text-align:center;">Error loading data</td></tr>`;
-    }
-};
-
-const generateInventoryMetricSelling = (data) => {
-  return data.map(item => `
-    <tr>
-      <td>${item.product_name}</td>
-      <td>${item.grouped_price}</td>
-    </tr>
-  `).join('\n');
-};
-
-const renderInventoryMetricSelling = (tableElement, data) => {
-  const rowsHtml = generateInventoryMetricSelling(data);
-  tableElement.innerHTML = rowsHtml;
-};
-
-const fetchInventoryMetricSelling = async () => {
-    try {
-        const response = await fetch('handlers/fetch_inventory_reports_selling.php'); 
-        const data = await response.json();
-
-        renderInventoryMetricSelling(sellingTable, data);
-    } catch (err) {
-        console.error(err);
-        table.innerHTML = `<tr><td colspan="2" style="text-align:center;">Error loading data</td></tr>`;
-    }
-};
-
-const generateInventoryMetricStock = (data) => {
-  return data.map(item => `
-    <tr>
-      <td>${item.product_name}</td>
-      <td>${item.current_stock}</td>
-    </tr>
-  `).join('\n');
-};
-
-const renderInventoryMetricStock = (tableElement, data) => {
-  const rowsHtml = generateInventoryMetricStock(data);
-  tableElement.innerHTML = rowsHtml;
-};
-
-const fetchInventoryMetricListStock = async () => {
-    try {
-        const response = await fetch('handlers/fetch_inventory_reports_stocks.php'); 
-        const data = await response.json();
-
-        renderInventoryMetricStock(stockTable, data);
-        console.log(data)
-    } catch (err) {
-        console.error(err);
-        table.innerHTML = `<tr><td colspan="2" style="text-align:center;">Error loading data</td></tr>`;
-    }
-};
+  } catch (error) {
+    showToast(error.message, 'error');
+  }
+}
 
 document.addEventListener('DOMContentLoaded', () =>{
-    fetchInventoryMetricStock();
-    fetchInventoryMetricListStock();
-    fetchInventoryMetricMostSold();
-    fetchInventoryMetricRevenue();
-    fetchSalesMetrics();
-    fetchSalesMetricTime();
-    fetchSalesMetricCategory();
-    fetchInventoryMetricSold();
-    fetchInventoryMetricSelling()
+    fetchSalesInventoryMetrics();
+    fetchSalesInventoryListMetrics();
 });

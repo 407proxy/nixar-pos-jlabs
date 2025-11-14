@@ -1,5 +1,9 @@
 /*
-	AUTHORS: Raean Chrissean R. Tamayo, Jared Ramon A. Elizan
+	AUTHOR/S:
+	- Raean Chrissean R. Tamayo
+	- Jul Leo S. Javellana
+	- Jared Ramon A. Elizan
+    - John Roland L. Octavio
 */
 
 :root {
@@ -510,4 +514,72 @@ td .btn {
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
+}
+
+.toast {
+    width: 350px;
+    color: gray;
+    border: 1px solid;
+}
+
+.toast.show {
+  opacity: 1;
+  transform: translateX(0);
+}
+
+.toast button {
+    height: 20px;
+    width: 20px;
+    background: transparent;
+    border: none;
+    color: grey;
+    font-size: 10px;
+    cursor: pointer;
+}
+
+.toast button:hover {
+    background-color: white;
+}
+
+.toast.success {
+    background-color: #e3ffe3;
+    border-color: #28a745;
+}
+
+.toast.success > div {
+    background-color: #28a745;
+}
+
+.toast.error {
+    background-color: #ffcccc;
+    border-color: #dc3545;
+}
+
+.toast.error > div {
+    background-color: #dc3545;
+}
+
+.toast.info {
+    background-color: #e6f7ff;
+    border-color: #17a2b8;
+}
+
+.toast.info > div {
+    background-color: #17a2b8;
+}
+
+.toast.success { background-color: #28a745; }
+.toast.error { background-color: #dc3545; }
+.toast.info { background-color: #17a2b8; }
+
+.report-header-info {
+    font-size: 10px;
+}
+
+.report-table-header {
+    font-size: 12px;
+}
+
+.report-table-items {
+    font-size: 10px;
 }

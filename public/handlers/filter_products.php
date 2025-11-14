@@ -1,4 +1,8 @@
 <?php 
+    /* Author: John Roland Octavio
+    * Fetches inventory items with optional filters (material, model, type, stock, price range),
+    * applies pagination, and returns results as JSON including image URLs.
+    */
     header("Content-Type: application/json");
     include_once __DIR__ . '/../../includes/config/_init.php';
     SessionManager::checkSession();

@@ -1,3 +1,9 @@
+/*
+* AUTHOR/S:
+* - John Roland Octavio
+* - Jul Leo Javellana
+* */
+
 const productContainers = document.getElementById('product-containers');
 const searchBar = document.getElementById('search-bar');
 const filterTiles = document.querySelectorAll('.filter-tile');
@@ -17,47 +23,31 @@ filterTiles.forEach(tile => {
         const category = tile.getAttribute('data-category');
         filterCategory.value = category;
 
-        fetch(`handlers/filter_category_products.php?category=${ encodeURIComponent(category) }`)
-            .then(res => res.json())
-            .then(data => {
-                console.log(data);
-                if(!data.products || data.products.length === 0) {
-                    productContainers.innerHTML = `
-                        <p class="text-center">No products found from the database.</p>
-                    `;
-                    return;
-                }
-                renderProducts(data.products);
-            })
-            .catch(err => {
-                console.log(err);
-            })
+        fetchCategoryProducts(category);
     });
 });
+
+const fetchCategoryProducts = async (category) => {
+    try {
+        const response = await fetch(`handlers/filter_category_products.php?category=${encodeURIComponent(category)}`);
+        const data = await response.json();
+
+        if (!data.products || data.products.length === 0) {
+            productContainers.innerHTML = `<p class="text-center">No products found from the database.</p>`;
+            return;
+        }
+
+        console.log(data.products);
+        renderProducts(data.products);
+    } catch (err) {
+        console.error(err);
+    }
+};
 
 searchBar.addEventListener('input', () => {
     clearTimeout(searchTimeout);
     searchTimeout = setTimeout(searchProducts, 500);
 })
-
-const fetchProducts = async (page = 1) => {
-    try {
-        const response = await fetch(`handlers/fetch_inventory.php?limit=${ LIMIT }&page=${ page }`)
-        const data = await response.json();
-        console.log(data.inventory);
-        console.log(data.inventory.length);
-        if(!data.inventory || data.inventory.length === 0) {
-            productContainers.innerHTML = `
-                <p>No products found from the database.</p>
-            `;
-            return;
-        }
-        console.log(data);
-        renderProducts(data.inventory);
-    } catch (err) {
-        console.error(err.message);
-    }
-}
 
 const createProductCard = (data) => {
     return `
@@ -275,7 +265,7 @@ const searchProducts = (page = 1) => {
     // add query check
     if(!query) {
         productContainers.innerHTML = "";
-        fetchProducts();
+        fetchCategoryProducts('all');
         return;
     }
 
@@ -311,14 +301,14 @@ const handleCheckout = async (checkoutForm, endpoint, checkoutData) => {
         modal.hide();
         checkoutForm.reset();
         console.log('Checkout success:', result.message);
-        fetchProducts();
+        fetchCategoryProducts(all);
     } catch(err) {
         console.error(err.message);
     }
 }
 
 document.addEventListener('DOMContentLoaded', () => {
-    fetchProducts();
+    fetchCategoryProducts('all');
 
     const checkoutModal = document.getElementById('checkoutModal');
     checkoutModal.addEventListener('show.bs.modal', () => {

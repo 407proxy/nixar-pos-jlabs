@@ -1,8 +1,12 @@
+<!--
+    AUTHOR/s:
+    - Jul Leo Javellana
+-->
 <nav class="navbar w-100 d-flex justify-content-between align-items-center rounded-3 px-4">
     <img
-            src="assets/svg/nixar-logo-white.svg"
-            alt="nixar-logo-white"
-            width="150px"
+        src="assets/svg/nixar-logo-white.svg"
+        alt="nixar-logo-white"
+        width="150px"
     />
 
     <!--desktop menu-->
@@ -16,6 +20,9 @@
     <?php if(SessionManager::get('role') === 'admin'): ?>
       <li class="nav-link py-2 px-4 rounded-pill">
         <a href="../public/reports.php">Reports</a>
+      </li>
+      <li class="nav-link py-2 px-4 rounded-pill">
+        <a href="../public/supplier.php">Suppliers</a>
       </li>
     <?php endif; ?>
   </ul>

@@ -1,26 +1,33 @@
-<?php 
+<!-- AUTHORS: Jared Ramon Elizan --> 
+<?php  
   include_once __DIR__ . '/../includes/config/_init.php';  
   $PageTitle = "Reports | NIXAR POS";
   $CssPath = "assets/css/styles.css";
-  $JSPath = "assets/js/reports.js";
+  $JSPath = "assets/js/scripts.js";
 
   include_once '../includes/head.php'; 
   SessionManager::checkSession();
 ?>
 
-<div class="container-fluid p-0 m-0 h-100 px-4 py-3  d-flex flex-column overflow-x-hidden">
+<div class="container-fluid p-0 m-0 h-100 px-4 py-3 d-flex flex-column overflow-x-hidden">
     <?php include_once '../includes/components/nav.php'; ?>
-        <div class="report-header d-flex justify-content-between align-items-center flex-wrap gap-3 mt-4">
-                <select id="reportType" class="text-input me-3" style="width: 200px;">
-            <option value="sales">Sales Report</option>
-            <option value="inventory">Inventory Report</option>
-        </select>
-                <div class="d-flex align-items-center gap-2">
-                    <input type="date" id="startDate" class="text-input" style="width: 150px;">
-                    <span>to</span>
-                    <input type="date" id="endDate" class="text-input" style="width: 150px;">
-                    <button class="btn ms-2">Generate Report</button>
-                </div>
+    <div class="report-header d-flex justify-content-between align-items-center flex-wrap gap-3 mt-4">
+        <label for="reportType" class="d-inline-flex flex-column gap-1 fw-semibold">
+            Report Type
+            <select id="reportType" class="text-input me-3" style="width: 200px;">
+                <option value="sales">Sales Report</option>
+                <option value="inventory">Inventory Report</option>
+            </select>
+        </label>
+        <div class="d-flex flex-column gap-1">
+            <p class="fw-semibold">Transaction Range</p>
+            <div class="d-flex align-items-center gap-2">
+                <input type="date" id="startDate" class="text-input" style="width: 150px;">
+                <span>to</span>
+                <input type="date" id="endDate" class="text-input" style="width: 150px;">
+                <button class="btn ms-2" onclick="handleGenerateReport()">Generate Report</button>
+            </div>
+        </div>
     </div>
 
     <!-- Sales Report -->
@@ -95,7 +102,7 @@
     </div>
 
     <!-- Inventory Report -->
-    <div id="inventoryReport" class="report-section" style="display:none; margin-top: 30px;">
+    <div id="inventoryReport" class="report-section" style="display:none; margin-top: 20px;">
         <h2 class="section-title">Metrics</h2>
         <div class="metrics-container" style="display: flex; flex-wrap: wrap; gap: 20px; margin-top: 10px;">
             <div class="metric-card filter-tile" style="flex: 1; min-width: 220px; text-align: center; padding: 20px;">
@@ -131,15 +138,15 @@
             </div>
         </div>
 
-        <h2 class="section-title" style="margin-top: 40px;">List Metrics</h2>
+        <h2 class="section-title" style="margin-top: 20px;">List Metrics</h2>
         <div class="list-metrics" style="display: flex; flex-wrap: wrap; gap: 20px; margin-top: 10px;">
             <div class="filter-tile" style="flex: 1; min-width: 300px; padding: 20px;">
                 <h4>Most Sold Items (by quantity) <i class="fa fa-arrows-alt-v" style="font-size: 15px;"></i></h4>
                 <table style="width:100%; margin-top:10px;">
                     <thead>
                     <tr>
-                    <th>Name</th>
-                    <th>Total</th>
+                        <th>Name</th>
+                        <th>Total</th>
                     </tr>
                     </thead>
                     <tbody id="inventory-table-sold">
@@ -172,7 +179,7 @@
                     <th>Total</th>
                     </tr>
                     </thead>
-                    <tbody id="inventory-table-sock">
+                    <tbody id="inventory-table-stock">
                     <!-- ===== HOST ALL LOW STOCK ITEMS FETCHED FROM JS ===== -->
                     </tbody>
                 </table>
@@ -181,4 +188,7 @@
     </div>
 </div>
 
-<?php include_once("../includes/footer.php"); ?>
+<?php include_once '../includes/components/toast-container.php'; ?>
+<!-- =============== REPORTS PAGE SPECIFIC SCRIPT =============== -->
+<script src="assets/js/reports.js?v=<?=filemtime('assets/js/reports.js')?>"></script>
+<?php include_once "../includes/footer.php" ?>

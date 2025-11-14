@@ -13,7 +13,7 @@
                 if (!$Stmt) {
                     throw new Exception('Failed to prepare INSERT statement: ' . $this->Conn->error);
                 }
-                $Stmt->bind_param("iiis", $TransactionData['issuer_id'], $TransactionData['customer_id'], $TransactionData['customer_id'], $TransactionData['payment_method']);
+                $Stmt->bind_param("iiis", $TransactionData['issuer_id'], $TransactionData['receipt_id'], $TransactionData['customer_id'], $TransactionData['payment_method']);
                 $Stmt->execute();
 
                 $Stmt->close();
@@ -74,6 +74,53 @@
             } catch (Exception $E) {
                 return [
                     'success' => false,
+                    'message' => $E->getMessage()
+                ];
+            }
+        }
+
+        public function fetchTransactionByRange($Start, $End) {
+            try {
+                $Sql = "SELECT 
+                        t.transaction_id, 
+                        t.customer_id, 
+                        t.created_at AS transaction_created_at, 
+                        t.payment_method, u.name AS issuer, 
+                        r.receipt_id, r.created_at AS issued_at, 
+                        r.total_amount, r.discount, 
+                        SUM(rd.quantity) AS item_qty 
+                    FROM transactions t 
+                    JOIN users u 
+                        ON t.issuer_id = u.user_id 
+                    JOIN receipts r 
+                        ON t.receipt_id = r.receipt_id 
+                    JOIN receipt_details rd 
+                        ON r.receipt_id = rd.receipt_id
+                    WHERE t.created_at BETWEEN ? AND ?
+                    GROUP BY t.transaction_id, t.customer_id, t.created_at, t.payment_method, u.name, r.created_at, r.total_amount, r.discount 
+                    ORDER BY t.created_at DESC";
+            
+                $Stmt = $this->Conn->prepare($Sql);
+                if (!$Stmt) {
+                    throw new Exception("Failed to prepare SELECT statement: {$this->Conn->error}");
+                }
+                $Stmt->bind_param("ss", $Start, $End);
+                $Stmt->execute();
+
+                $Result = $Stmt->get_result();
+                $Rows = $Result->fetch_all(MYSQLI_ASSOC);
+
+                $Result->free();
+                $Stmt->close();
+                
+                return [
+                    'success' => true,
+                    'transactions' => $Rows
+                ];
+            } catch (Exception $E) {
+                error_log("Transaction Error: {$E->getMessage()}");
+                return [
+                    'status' => false,
                     'message' => $E->getMessage()
                 ];
             }

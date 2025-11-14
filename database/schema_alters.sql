@@ -1,3 +1,7 @@
+/*
+    Author: Ignatius Warren Benjamin Javelons
+*/
+
 ALTER TABLE nixar_products
 ADD COLUMN product_supplier_id INT NOT NULL
 AFTER product_material_id;

@@ -1,3 +1,4 @@
+<!-- AUTHORS: Raean Chrissean R. Tamayo, -->
 <div class="modal fade" id="deleteProductModal" tabindex="-1" aria-labelledby="deleteProductModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-md">
         <div class="modal-content">

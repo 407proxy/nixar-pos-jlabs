@@ -1,4 +1,8 @@
 <?php 
+    /* Author: John Roland Octavio 
+    *  Handles checkout process: records receipt, receipt details, customer info, transaction, and 
+    *  car details, updates inventory stock and returns JSON success/error response
+    */
     header("Content-Type: application/json");
     include_once __DIR__ . '/../../includes/config/_init.php';  
     SessionManager::checkSession();

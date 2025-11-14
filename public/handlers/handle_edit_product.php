@@ -1,4 +1,9 @@
 <?php 
+    /* Author: John Roland Octavio
+    * Updates product, inventory, and supplier information.
+    * Handles image upload, ensures transactional integrity,
+    * and returns a JSON response indicating success or failure.
+    */
     header("Content-Type: application/json");
     include_once __DIR__ . '/../../includes/config/_init.php';  
     SessionManager::checkSession();

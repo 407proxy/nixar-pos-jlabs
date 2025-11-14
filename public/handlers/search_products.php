@@ -1,4 +1,9 @@
 <?php 
+    /* Author: John Roland Octavio
+    * Handles AJAX search for inventory items by keyword.
+    * Returns paginated results with total pages and current page in JSON format.
+    */
+
     // Let the browser know that we are sending JSON as response
     header("Content-Type: application/json");
     include_once __DIR__ . '/../../includes/config/_init.php';  
