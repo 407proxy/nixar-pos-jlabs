@@ -77,7 +77,9 @@ const populateReportData = () => {
   const reportPeriod = JSON.parse(sessionStorage.getItem("reportPeriod"));
   const { transactions, inventory, list_metrics, sales_metrics } = reportData.result;
   const inventoryTransformed = inventory.map(removeFromInventory);
-
+  
+  console.log(reportData);
+  console.log(reportPeriod);
   // Extract sales_metric from JSON data and transform into a row entry
   const { best_item_category, low_stock: { low_stock } = low_stock, most_sold } = sales_metrics;
   const inventoryMetricRow = [
@@ -97,8 +99,8 @@ const populateReportData = () => {
     }), 
     most_sold_qty
   );
-  console.log(salesReportMetricRow);
-  console.log(inventoryReportMetricRow);
+  // console.log(salesReportMetricRow);
+  // console.log(inventoryReportMetricRow);
 
   // Create an HTML string for the table entries
   const salesNumericString = createRows(createTd(sales_metrics.all_sales));
